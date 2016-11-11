@@ -26,9 +26,9 @@ public class Boop {
     Game game;
     @Inject
     Logger logger;
-    @Inject @DefaultConfig(sharedRoot = false)
+    @Inject @DefaultConfig(sharedRoot = true)
     Path path;
-    @Inject @DefaultConfig(sharedRoot = false)
+    @Inject @DefaultConfig(sharedRoot = true)
     ConfigurationLoader<CommentedConfigurationNode> loader;
     Config config;
     @Listener
