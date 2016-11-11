@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Plugin(id = "boop", name = "Boop", version = "1.0.0", authors = "pie_flavor", description = "Notifies you when you're mentioned in chat.")
+@Plugin(id = "boop", name = "Boop", version = "1.0.1", authors = "pie_flavor", description = "Notifies you when you're mentioned in chat.")
 public class Boop {
     @Inject
     Game game;
