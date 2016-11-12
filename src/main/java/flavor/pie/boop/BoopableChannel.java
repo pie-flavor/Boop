@@ -9,6 +9,7 @@ import org.spongepowered.api.text.chat.ChatType;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class BoopableChannel implements MessageChannel {
             }
             if (member instanceof Player) {
                 Player player = (Player) member;
-                if (textContains(original, config.prefix + player.getName()) && config.sound.play) {
+                if ((textContains(original, config.prefix + player.getName()) || textContainsAny(original, getGroupNames(player))) && config.sound.play) {
                     player.playSound(config.sound.sound, player.getLocation().getPosition(), 10.0);
                 }
             }
@@ -52,12 +53,27 @@ public class BoopableChannel implements MessageChannel {
         return StreamSupport.stream(text.withChildren().spliterator(), false).anyMatch(t -> t.toPlain().contains(match));
     }
 
+    private boolean textContainsAny(Text text, Collection<String> matches) {
+        return matches.stream().anyMatch(s -> textContains(text, s));
+    }
+
+    private List<String> getGroupNames(Player p) {
+        return config.groups.stream().filter(s -> p.hasPermission("boop.group."+s.replace(".", "_"))).map(s -> config.prefix+s).collect(Collectors.toList());
+    }
+
     @Override
     public Optional<Text> transformMessage(@Nullable Object sender, MessageReceiver recipient, Text original, ChatType type) {
         if (!(recipient instanceof Player)) return Optional.of(original);
-        String match = config.prefix + ((Player) recipient).getName();
-        if (!textContains(original, match)) return Optional.of(original);
-        if (config.name.recolor) original = addColor(original, match);
+        Player p = (Player) recipient;
+        List<String> groups = getGroupNames(p);
+        String match = config.prefix + p.getName();
+        if (!textContains(original, match) && !textContainsAny(original, groups)) return Optional.of(original);
+        if (config.name.recolor) {
+            original = addColor(original, match);
+            for (String s: groups) {
+                original = addColor(original, s);
+            }
+        }
         if (config.message.recolor) original = original.toBuilder().color(config.message.color).build();
         return Optional.of(original);
     }

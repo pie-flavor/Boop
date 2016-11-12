@@ -1,10 +1,13 @@
 package flavor.pie.boop;
 
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.text.format.TextColor;
+
+import java.util.List;
 
 @ConfigSerializable
 public class Config {
@@ -13,6 +16,7 @@ public class Config {
     @Setting public Name name;
     @Setting public Sound sound;
     @Setting public Message message;
+    @Setting public List<String> groups;
     @ConfigSerializable
     public static class Name {
         @Setting public boolean recolor;

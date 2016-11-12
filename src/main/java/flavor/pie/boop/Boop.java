@@ -1,6 +1,7 @@
 package flavor.pie.boop;
 
 import com.google.inject.Inject;
+import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -42,36 +43,75 @@ public class Boop {
                 try {
                     throw ex;
                 } finally {
-                    loadDefault();
+                    mapDefault();
                 }
             }
         }
+        ConfigurationNode root;
         try {
-            config = loader.load().getValue(Config.type);
+            root = loader.load();
         } catch (IOException ex) {
             logger.error("Could not load the config file!");
             try {
                 throw ex;
             } finally {
-                loadDefault();
+                mapDefault();
             }
+        }
+        if (root.getNode("version").getInt() < 2) {
+            try {
+                root.mergeValuesFrom(loadDefault());
+                root.getNode("version").setValue(2);
+            } catch (IOException ex) {
+                logger.error("Could not update config!");
+                try {
+                    throw ex;
+                } finally {
+                    mapDefault();
+                }
+            }
+            try {
+                loader.save(root);
+            } catch (IOException ex) {
+                logger.error("Could not save config!");
+                try {
+                    throw ex;
+                } finally {
+                    try {
+                        config = root.getValue(Config.type);
+                    } catch (ObjectMappingException ex2) {
+                        logger.error("Invalid config file!");
+                        try {
+                            throw ex;
+                        } finally {
+                            mapDefault();
+                        }
+                    }
+                }
+            }
+        }
+        try {
+            config = root.getValue(Config.type);
         } catch (ObjectMappingException ex) {
             logger.error("Invalid config file!");
             try {
                 throw ex;
             } finally {
-                loadDefault();
+                mapDefault();
             }
         }
     }
-    private void loadDefault() throws IOException, ObjectMappingException {
+    private void mapDefault() throws IOException, ObjectMappingException {
         try {
-            config = HoconConfigurationLoader.builder().setURL(game.getAssetManager().getAsset(this, "default.conf").get().getUrl()).build().load(loader.getDefaultOptions()).getValue(Config.type);
+            config = loadDefault().getValue(Config.type);
         } catch (IOException | ObjectMappingException ex) {
             logger.error("Could not load the embedded default config! Disabling plugin.");
             game.getEventManager().unregisterPluginListeners(this);
             throw ex;
         }
+    }
+    private ConfigurationNode loadDefault() throws IOException {
+        return HoconConfigurationLoader.builder().setURL(game.getAssetManager().getAsset(this, "default.conf").get().getUrl()).build().load(loader.getDefaultOptions());
     }
 
     @Listener
