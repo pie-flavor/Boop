@@ -50,7 +50,7 @@ public class BoopableChannel implements MessageChannel {
     }
 
     private boolean textContains(Text text, String match) {
-        return StreamSupport.stream(text.withChildren().spliterator(), false).anyMatch(t -> t.toPlain().contains(match));
+        return StreamSupport.stream(text.withChildren().spliterator(), false).anyMatch(t -> t.toPlain().toLowerCase().contains(match.toLowerCase()));
     }
 
     private boolean textContainsAny(Text text, Collection<String> matches) {
@@ -83,7 +83,7 @@ public class BoopableChannel implements MessageChannel {
             text = text.toBuilder().removeAll().append(text.getChildren().stream().map(child -> addColor(child, name)).collect(Collectors.toList())).build();
         }
         String plain = text.toPlainSingle();
-        if (plain.contains(name)) {
+        if (plain.toLowerCase().contains(name.toLowerCase())) {
             Text nameText = Text.of(config.name.color, name);
             if (plain.equals(name)) return nameText;
             Text.Builder builder = Text.builder();
