@@ -25,3 +25,5 @@ Boop is a chat plugin that notifies you when you're mentioned in chat. By defaul
 1.0.1: Changed the location of the config.
 
 1.1.0: Added groups.
+
+1.2.0: Added tab-completion for both players and groups; changed mentions to be case-insensitive.
