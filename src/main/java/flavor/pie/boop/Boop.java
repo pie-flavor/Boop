@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
@@ -20,6 +22,7 @@ import org.spongepowered.api.text.channel.MessageChannel;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 @Plugin(id = "boop", name = "Boop", version = "1.1.0", authors = "pie_flavor", description = "Notifies you when you're mentioned in chat.")
 public class Boop {
@@ -119,6 +122,21 @@ public class Boop {
         MessageChannel channel = e.getChannel().orElseGet(e::getOriginalChannel);
         if (!(channel instanceof BoopableChannel)) {
             e.setChannel(new BoopableChannel(channel.getMembers(), config));
+        }
+    }
+
+    @Listener
+    public void onTab(TabCompleteEvent.Chat e) {
+        String currentWord;
+        if (!e.getRawMessage().contains(" ")) {
+            currentWord = e.getRawMessage();
+        } else {
+            String[] words = e.getRawMessage().split(" ");
+            currentWord = words[words.length - 1];
+        }
+        if (currentWord.startsWith("@")) {
+            e.getTabCompletions().addAll(config.groups.stream().map(s -> "@"+s).filter(s -> s.toLowerCase().startsWith(currentWord.toLowerCase())).collect(Collectors.toList()));
+            e.getTabCompletions().addAll(game.getServer().getOnlinePlayers().stream().map(Player::getName).map(s -> "@"+s).filter(s -> s.toLowerCase().startsWith(currentWord.toLowerCase())).collect(Collectors.toList()));
         }
     }
 
