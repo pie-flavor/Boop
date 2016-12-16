@@ -11,7 +11,7 @@ import java.util.List;
 
 @ConfigSerializable
 public class Config {
-    public static TypeToken<Config> type = TypeToken.of(Config.class);
+    public final static TypeToken<Config> type = TypeToken.of(Config.class);
     @Setting public String prefix;
     @Setting public Name name;
     @Setting public Sound sound;
