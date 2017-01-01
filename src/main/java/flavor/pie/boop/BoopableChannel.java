@@ -6,6 +6,7 @@ import org.spongepowered.api.text.channel.ChatTypeMessageReceiver;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MessageReceiver;
 import org.spongepowered.api.text.chat.ChatType;
+import org.spongepowered.api.text.title.Title;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -44,13 +45,18 @@ public class BoopableChannel implements MessageChannel {
                 Player player = (Player) member;
                 boolean p = sender instanceof Player;
                 Player s = sender instanceof Player ? (Player) sender : null;
-                if (config.sound.play &&
+                if (config.sound.play || config.title.use &&
                         ((!p || (s.hasPermission("boop.use." + player.getName()) || !config.restricted.contains(player.getName())))
                                 && (textContains(original, config.prefix + player.getName()))
                             ||  textContainsAny(original, getGroupNames(player).stream()
                                 .filter(t -> !p || (s.hasPermission("boop.use"+t) || !config.restricted.contains(t)))
                                 .collect(Collectors.toList())))) {
-                    player.playSound(config.sound.sound, player.getLocation().getPosition(), 10.0);
+                    if (config.sound.play) {
+                        player.playSound(config.sound.sound, player.getLocation().getPosition(), 10.0);
+                    }
+                    if (config.title.use) {
+                        player.sendTitle(Title.builder().subtitle(config.title.text).fadeIn(20).fadeOut(20).stay(3).build());
+                    }
                 }
             }
         }

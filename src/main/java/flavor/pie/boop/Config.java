@@ -7,6 +7,7 @@ import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.effect.sound.SoundTypes;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -21,6 +22,7 @@ public class Config {
     @Setting public Message message = new Message();
     @Setting public List<String> groups = ImmutableList.of();
     @Setting public List<String> restricted = ImmutableList.of();
+    @Setting public Title title = new Title();
     @ConfigSerializable
     public static class Name {
         @Setting public boolean recolor = true;
@@ -35,5 +37,10 @@ public class Config {
     public static class Sound {
         @Setting public boolean play = true;
         @Setting public SoundType sound = SoundTypes.ENTITY_EXPERIENCE_ORB_PICKUP;
+    }
+    @ConfigSerializable
+    public static class Title {
+        @Setting public boolean use = true;
+        @Setting public Text text = Text.EMPTY;
     }
 }
