@@ -61,10 +61,10 @@ public class Boop {
                 mapDefault();
             }
         }
-        if (root.getNode("version").getInt() < 2) {
+        if (root.getNode("version").getInt() < 3) {
             try {
                 root.mergeValuesFrom(loadDefault());
-                root.getNode("version").setValue(2);
+                root.getNode("version").setValue(3);
             } catch (IOException ex) {
                 logger.error("Could not update config!");
                 try {

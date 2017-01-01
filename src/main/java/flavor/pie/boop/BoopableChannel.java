@@ -42,7 +42,14 @@ public class BoopableChannel implements MessageChannel {
             }
             if (member instanceof Player) {
                 Player player = (Player) member;
-                if ((textContains(original, config.prefix + player.getName()) || textContainsAny(original, getGroupNames(player))) && config.sound.play) {
+                boolean p = sender instanceof Player;
+                Player s = sender instanceof Player ? (Player) sender : null;
+                if (config.sound.play &&
+                        ((!p || (s.hasPermission("boop.use." + player.getName()) || !config.restricted.contains(player.getName())))
+                                && (textContains(original, config.prefix + player.getName()))
+                            ||  textContainsAny(original, getGroupNames(player).stream()
+                                .filter(t -> !p || (s.hasPermission("boop.use"+t) || !config.restricted.contains(t)))
+                                .collect(Collectors.toList())))) {
                     player.playSound(config.sound.sound, player.getLocation().getPosition(), 10.0);
                 }
             }
