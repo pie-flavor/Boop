@@ -19,4 +19,5 @@ dependencies {
 
 spongestart {
     eula true
+    spongeVanillaBuild '1.10.2-5.2.0-BETA-381'
 }
