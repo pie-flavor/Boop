@@ -1,6 +1,7 @@
 plugins {
-    id 'com.qixalite.spongestart' version '1.5.2'
-    id 'flavor.pie.promptsign' version '1.1.0'
+    id 'com.qixalite.spongestart' version '1.6.0'
+    id 'flavor.pie.promptsign' version '1.0.1'
+    id 'java'
 }
 
 group 'flavor.pie'
@@ -19,5 +20,5 @@ dependencies {
 
 spongestart {
     eula true
-    spongeVanillaBuild '1.10.2-5.2.0-BETA-381'
+    setSpongeVanillaVersion '1.10.2-5.1.0-BETA-380'
 }
