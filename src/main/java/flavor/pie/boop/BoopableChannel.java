@@ -95,13 +95,13 @@ public class BoopableChannel implements MessageChannel {
         }
         if (config.name.colorAll) {
             for (Player pl : Sponge.getServer().getOnlinePlayers()) {
-                String pmatch = '@' + p.getName();
+                String pmatch = config.prefix + p.getName();
                 if (!pl.equals(p) && textContains(original, pmatch)) {
                     original = addColor(original, pmatch, config.name.altColor);
                 }
             }
             for (String group : config.groups) {
-                String gmatch = '@' + group;
+                String gmatch = config.prefix + group;
                 if (!isInGroup(p, group) && textContains(original, gmatch)) {
                     original = addColor(original, gmatch, config.name.altColor);
                 }
