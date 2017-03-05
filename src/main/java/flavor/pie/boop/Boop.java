@@ -64,7 +64,7 @@ public class Boop {
         if (root.getNode("version").getInt() < 4) {
             try {
                 root.mergeValuesFrom(loadDefault());
-                root.getNode("version").setValue(3);
+                root.getNode("version").setValue(4);
             } catch (IOException ex) {
                 logger.error("Could not update config!");
                 try {
