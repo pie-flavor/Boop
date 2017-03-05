@@ -77,7 +77,7 @@ public class BoopableChannel implements MessageChannel {
     }
 
     private boolean isInGroup(Player p, String group) {
-        return p.hasPermission("boop.group." + group.replace(".", "_"));
+        return p.hasPermission("boop.group." + (group.contains(".") ? group.replace('.', '_') : group));
     }
 
     @Override
