@@ -101,7 +101,7 @@ public class BoopableChannel implements MessageChannel {
                 }
             }
             for (String group : config.groups) {
-                if (!isInGroup(p, group)) {
+                if (!isInGroup(p, group) && textContains(original, group)) {
                     original = addColor(original, group, config.name.altColor);
                 }
             }
