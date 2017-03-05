@@ -101,8 +101,9 @@ public class BoopableChannel implements MessageChannel {
                 }
             }
             for (String group : config.groups) {
-                if (!isInGroup(p, group) && textContains(original, group)) {
-                    original = addColor(original, group, config.name.altColor);
+                String gmatch = '@' + group;
+                if (!isInGroup(p, group) && textContains(original, gmatch)) {
+                    original = addColor(original, gmatch, config.name.altColor);
                 }
             }
         }
@@ -116,7 +117,7 @@ public class BoopableChannel implements MessageChannel {
         }
         String plain = text.toPlainSingle();
         if (plain.toLowerCase().contains(name.toLowerCase())) {
-            Text nameText = Text.of(config.name.color, name);
+            Text nameText = Text.of(color, name);
             if (plain.equals(name)) return nameText;
             Text.Builder builder = Text.builder();
             String[] sections = plain.split(Pattern.quote(name));
