@@ -61,7 +61,7 @@ public class Boop {
                 mapDefault();
             }
         }
-        if (root.getNode("version").getInt() < 3) {
+        if (root.getNode("version").getInt() < 4) {
             try {
                 root.mergeValuesFrom(loadDefault());
                 root.getNode("version").setValue(3);

@@ -1,11 +1,13 @@
 package flavor.pie.boop;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.ChatTypeMessageReceiver;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MessageReceiver;
 import org.spongepowered.api.text.chat.ChatType;
+import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.title.Title;
 
 import javax.annotation.Nullable;
@@ -71,7 +73,11 @@ public class BoopableChannel implements MessageChannel {
     }
 
     private List<String> getGroupNames(Player p) {
-        return config.groups.stream().filter(s -> p.hasPermission("boop.group."+s.replace(".", "_"))).map(s -> config.prefix+s).collect(Collectors.toList());
+        return config.groups.stream().filter(s -> isInGroup(p, s)).map(s -> config.prefix+s).collect(Collectors.toList());
+    }
+
+    private boolean isInGroup(Player p, String group) {
+        return p.hasPermission("boop.group." + group.replace(".", "_"));
     }
 
     @Override
@@ -80,20 +86,33 @@ public class BoopableChannel implements MessageChannel {
         Player p = (Player) recipient;
         List<String> groups = getGroupNames(p);
         String match = config.prefix + p.getName();
-        if (!textContains(original, match) && !textContainsAny(original, groups)) return Optional.of(original);
+        if (!textContains(original, match) && !config.name.colorAll && !textContainsAny(original, groups)) return Optional.of(original);
         if (config.name.recolor) {
-            original = addColor(original, match);
+            original = addColor(original, match, config.name.color);
             for (String s: groups) {
-                original = addColor(original, s);
+                original = addColor(original, s, config.name.color);
+            }
+        }
+        if (config.name.colorAll) {
+            for (Player pl : Sponge.getServer().getOnlinePlayers()) {
+                String pmatch = '@' + p.getName();
+                if (!pl.equals(p) && textContains(original, pmatch)) {
+                    original = addColor(original, pmatch, config.name.altColor);
+                }
+            }
+            for (String group : config.groups) {
+                if (!isInGroup(p, group)) {
+                    original = addColor(original, group, config.name.altColor);
+                }
             }
         }
         if (config.message.recolor) original = original.toBuilder().color(config.message.color).build();
         return Optional.of(original);
     }
 
-    private Text addColor(Text text, String name) {
+    private Text addColor(Text text, String name, TextColor color) {
         if (!text.getChildren().isEmpty()) {
-            text = text.toBuilder().removeAll().append(text.getChildren().stream().map(child -> addColor(child, name)).collect(Collectors.toList())).build();
+            text = text.toBuilder().removeAll().append(text.getChildren().stream().map(child -> addColor(child, name, color)).collect(Collectors.toList())).build();
         }
         String plain = text.toPlainSingle();
         if (plain.toLowerCase().contains(name.toLowerCase())) {

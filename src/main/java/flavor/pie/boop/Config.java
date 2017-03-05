@@ -27,6 +27,8 @@ public class Config {
     public static class Name {
         @Setting public boolean recolor = true;
         @Setting public TextColor color = TextColors.YELLOW;
+        @Setting("color-all") public boolean colorAll = true;
+        @Setting("alt-color") public TextColor altColor = TextColors.GRAY;
     }
     @ConfigSerializable
     public static class Message {
