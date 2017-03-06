@@ -38,70 +38,26 @@ public class Boop {
     @Listener
     public void preInit(GamePreInitializationEvent e) throws IOException, ObjectMappingException {
         Asset conf = game.getAssetManager().getAsset(this, "default.conf").get();
-        if (!Files.exists(path)) {
-            try {
-                conf.copyToFile(path);
-            } catch (IOException ex) {
-                logger.error("Could not copy the config file!");
-                try {
-                    throw ex;
-                } finally {
-                    mapDefault();
-                }
-            }
-        }
         ConfigurationNode root;
         try {
-            root = loader.load();
-        } catch (IOException ex) {
-            logger.error("Could not load the config file!");
-            try {
-                throw ex;
-            } finally {
-                mapDefault();
+            if (!Files.exists(path)) {
+                conf.copyToFile(path);
             }
-        }
-        if (root.getNode("version").getInt() < 4) {
-            try {
+            root = loader.load();
+            if (root.getNode("version").getInt() < 4) {
                 root.mergeValuesFrom(loadDefault());
                 root.getNode("version").setValue(4);
-            } catch (IOException ex) {
-                logger.error("Could not update config!");
-                try {
-                    throw ex;
-                } finally {
-                    mapDefault();
-                }
-            }
-            try {
                 loader.save(root);
-            } catch (IOException ex) {
-                logger.error("Could not save config!");
-                try {
-                    throw ex;
-                } finally {
-                    try {
-                        config = root.getValue(Config.type);
-                    } catch (ObjectMappingException ex2) {
-                        logger.error("Invalid config file!");
-                        try {
-                            throw ex;
-                        } finally {
-                            mapDefault();
-                        }
-                    }
-                }
             }
-        }
-        try {
             config = root.getValue(Config.type);
+        } catch (IOException ex) {
+            logger.error("Error loading config!");
+            mapDefault();
+            throw ex;
         } catch (ObjectMappingException ex) {
             logger.error("Invalid config file!");
-            try {
-                throw ex;
-            } finally {
-                mapDefault();
-            }
+            mapDefault();
+            throw ex;
         }
     }
     private void mapDefault() throws IOException, ObjectMappingException {
