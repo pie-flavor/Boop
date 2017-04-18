@@ -95,7 +95,7 @@ public class BoopableChannel implements MessageChannel {
         }
         if (config.name.colorAll) {
             for (Player pl : Sponge.getServer().getOnlinePlayers()) {
-                String pmatch = config.prefix + p.getName();
+                String pmatch = config.prefix + pl.getName();
                 if (!pl.equals(p) && textContains(original, pmatch)) {
                     original = addColor(original, pmatch, config.name.altColor);
                 }
