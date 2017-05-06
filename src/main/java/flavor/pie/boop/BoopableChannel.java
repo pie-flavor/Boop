@@ -1,5 +1,6 @@
 package flavor.pie.boop;
 
+import com.google.common.collect.Lists;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -50,9 +51,9 @@ public class BoopableChannel implements MessageChannel {
                 if ((config.sound.play || config.title.use) &&
                         ((!p || (s.hasPermission("boop.use." + player.getName()) || !config.restricted.contains(player.getName())))
                                 && (textContains(original, config.prefix + player.getName())
-                            ||  textContainsAny(original, getGroupNames(player).stream()
-                                .filter(t -> !p || (s.hasPermission("boop.use"+t) || !config.restricted.contains(t)))
-                                .collect(Collectors.toList()))))) {
+                            ||  textContainsAny(original, applyPrefixes(getGroupNames(player).stream()
+                                .filter(t -> !p || (s.hasPermission("boop.use." + t) || !config.restricted.contains(t)))
+                                .collect(Collectors.toList())))))) {
                     if (config.sound.play) {
                         player.playSound(config.sound.sound, player.getLocation().getPosition(), 10.0);
                     }
@@ -73,7 +74,11 @@ public class BoopableChannel implements MessageChannel {
     }
 
     private List<String> getGroupNames(Player p) {
-        return config.groups.stream().filter(s -> isInGroup(p, s)).map(s -> config.prefix+s).collect(Collectors.toList());
+        return config.groups.stream().filter(s -> isInGroup(p, s)).collect(Collectors.toList());
+    }
+
+    private List<String> applyPrefixes(List<String> in) {
+        return Lists.transform(in, config.prefix::concat);
     }
 
     private boolean isInGroup(Player p, String group) {
@@ -84,7 +89,7 @@ public class BoopableChannel implements MessageChannel {
     public Optional<Text> transformMessage(@Nullable Object sender, MessageReceiver recipient, Text original, ChatType type) {
         if (!(recipient instanceof Player)) return Optional.of(original);
         Player p = (Player) recipient;
-        List<String> groups = getGroupNames(p);
+        List<String> groups = applyPrefixes(getGroupNames(p));
         String match = config.prefix + p.getName();
         if (!textContains(original, match) && !config.name.colorAll && !textContainsAny(original, groups)) return Optional.of(original);
         if (config.name.recolor) {
