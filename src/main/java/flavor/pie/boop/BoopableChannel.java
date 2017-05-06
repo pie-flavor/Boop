@@ -128,8 +128,8 @@ public class BoopableChannel implements MessageChannel {
             String[] sections = plain.split(Pattern.quote(name));
             if (plain.endsWith(name)) {
                 String[] newSections = new String[sections.length + 1];
-                System.arraycopy(sections, 0, newSections, 1, sections.length);
-                newSections[0] = "";
+                System.arraycopy(sections, 0, newSections, 0, sections.length);
+                newSections[sections.length - 1] = "";
                 sections = newSections;
             }
             for (int i = 0; i < sections.length - 1; i++) {
