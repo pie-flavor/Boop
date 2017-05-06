@@ -24,7 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 
-@Plugin(id = "boop", name = "Boop", version = "1.4.4", authors = "pie_flavor", description = "Notifies you when you're mentioned in chat.")
+@Plugin(id = "boop", name = "Boop", version = "1.4.5", authors = "pie_flavor", description = "Notifies you when you're mentioned in chat.")
 public class Boop {
     @Inject
     Game game;
