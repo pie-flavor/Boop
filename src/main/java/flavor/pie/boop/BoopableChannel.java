@@ -91,7 +91,8 @@ public class BoopableChannel implements MessageChannel {
         Player p = (Player) recipient;
         List<String> groups = applyPrefixes(getGroupNames(p));
         String match = config.prefix + p.getName();
-        if (!textContains(original, match) && !config.name.colorAll && !textContainsAny(original, groups)) return Optional.of(original);
+        boolean matchesAny = textContains(original, match) || textContainsAny(original, groups);
+        if (!matchesAny && !config.name.colorAll) return Optional.of(original);
         if (config.name.recolor) {
             original = addColor(original, match, config.name.color);
             for (String s: groups) {
@@ -112,7 +113,7 @@ public class BoopableChannel implements MessageChannel {
                 }
             }
         }
-        if (config.message.recolor) original = original.toBuilder().color(config.message.color).build();
+        if (matchesAny && config.message.recolor) original = original.toBuilder().color(config.message.color).build();
         return Optional.of(original);
     }
 
