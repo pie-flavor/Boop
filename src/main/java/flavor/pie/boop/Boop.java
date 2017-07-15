@@ -6,6 +6,7 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.bstats.sponge.MetricsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.asset.Asset;
@@ -34,6 +35,8 @@ public class Boop {
     Path path;
     @Inject @DefaultConfig(sharedRoot = true)
     ConfigurationLoader<CommentedConfigurationNode> loader;
+    @Inject
+    MetricsLite metrics;
     Config config;
     public static Boop instance;
     @Listener
