@@ -1,6 +1,7 @@
 package flavor.pie.boop;
 
 import com.google.common.collect.Lists;
+import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -13,6 +14,7 @@ import org.spongepowered.api.text.title.Title;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -52,8 +54,8 @@ public class BoopableChannel implements MessageChannel {
                 Player s = p ? (Player) sender : null;
                 if ((getConfig().sound.play || getConfig().title.use) &&
                         ((!p || (s.hasPermission("boop.use." + player.getName()) || !getConfig().restricted.contains(player.getName())))
-                                && (textContains(original, getConfig().prefix + player.getName())
-                            ||  textContainsAny(original, applyPrefixes(getGroupNames(player).stream()
+                                && (textContainsAny(original, getPlayerMatches(player))
+                            || textContainsAny(original, applyPrefixes(getGroupNames(player).stream()
                                 .filter(t -> !p || (s.hasPermission("boop.use." + t) || !getConfig().restricted.contains(t)))
                                 .collect(Collectors.toList())))))) {
                     if (getConfig().sound.play) {
@@ -79,6 +81,23 @@ public class BoopableChannel implements MessageChannel {
         return getConfig().groups.stream().filter(s -> isInGroup(p, s)).collect(Collectors.toList());
     }
 
+    private List<String> getPlayerMatches(Player match) {
+        List<String> ret = new LinkedList<>();
+        ret.add(match.getName());
+        if (getConfig().aliases.containsKey(match.getUniqueId())) {
+            for (String s : getConfig().aliases.get(match.getUniqueId())) {
+                if (!Sponge.getServer().getPlayer(s).isPresent()) {
+                    ret.add(s);
+                }
+            }
+        }
+        if (Boop.instance.nucleusEnabled) {
+            NucleusAPI.getNicknameService().ifPresent(nucleusNicknameService -> nucleusNicknameService.getNickname(match)
+                    .ifPresent(text -> ret.add(getConfig().prefix + text.toPlain())));
+        }
+        return ret;
+    }
+
     private List<String> applyPrefixes(List<String> in) {
         return Lists.transform(in, getConfig().prefix::concat);
     }
@@ -92,20 +111,22 @@ public class BoopableChannel implements MessageChannel {
         if (!(recipient instanceof Player)) return Optional.of(original);
         Player p = (Player) recipient;
         List<String> groups = applyPrefixes(getGroupNames(p));
-        String match = getConfig().prefix + p.getName();
-        boolean matchesAny = textContains(original, match) || textContainsAny(original, groups);
+        boolean matchesAny = textContainsAny(original, getPlayerMatches(p)) || textContainsAny(original, groups);
         if (!matchesAny && !getConfig().name.colorAll) return Optional.of(original);
         if (getConfig().name.recolor) {
-            original = addColor(original, match, getConfig().name.color);
-            for (String s: groups) {
+            for (String match : getPlayerMatches(p)) {
+                original = addColor(original, match, getConfig().name.color);
+            }
+            for (String s : groups) {
                 original = addColor(original, s, getConfig().name.color);
             }
         }
         if (getConfig().name.colorAll) {
             for (Player pl : Sponge.getServer().getOnlinePlayers()) {
-                String pmatch = getConfig().prefix + pl.getName();
-                if (!pl.equals(p) && textContains(original, pmatch)) {
-                    original = addColor(original, pmatch, getConfig().name.altColor);
+                for (String pmatch : getPlayerMatches(pl)) {
+                    if (!pl.equals(p) && textContains(original, pmatch)) {
+                        original = addColor(original, pmatch, getConfig().name.altColor);
+                    }
                 }
             }
             for (String group : getConfig().groups) {

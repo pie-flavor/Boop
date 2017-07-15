@@ -9,6 +9,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bstats.sponge.MetricsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.entity.living.player.Player;
@@ -17,6 +18,7 @@ import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.channel.MessageChannel;
 
@@ -25,8 +27,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 
-@Plugin(id = "boop", name = "Boop", version = "1.4.6", authors = "pie_flavor", description = "Notifies you when you're mentioned in chat.")
+@Plugin(id = "boop", name = "Boop", version = "1.4.6", authors = "pie_flavor",
+        description = "Notifies you when you're mentioned in chat.",
+        dependencies = @Dependency(id = "nucleus", optional = true))
 public class Boop {
+    public static Boop instance;
     @Inject
     Game game;
     @Inject
@@ -38,7 +43,7 @@ public class Boop {
     @Inject
     MetricsLite metrics;
     Config config;
-    public static Boop instance;
+    boolean nucleusEnabled;
     @Listener
     public void preInit(GamePreInitializationEvent e) throws IOException, ObjectMappingException {
         instance = this;
@@ -49,9 +54,9 @@ public class Boop {
                 conf.copyToFile(path);
             }
             root = loader.load();
-            if (root.getNode("version").getInt() < 4) {
+            if (root.getNode("version").getInt() < 5) {
                 root.mergeValuesFrom(loadDefault());
-                root.getNode("version").setValue(4);
+                root.getNode("version").setValue(5);
                 loader.save(root);
             }
             config = root.getValue(Config.type);
@@ -63,6 +68,9 @@ public class Boop {
             logger.error("Invalid config file!");
             mapDefault();
             throw ex;
+        }
+        if (Sponge.getPluginManager().isLoaded("nucleus")) {
+            nucleusEnabled = true;
         }
     }
     private void mapDefault() throws IOException, ObjectMappingException {

@@ -1,7 +1,7 @@
 package flavor.pie.boop;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
@@ -12,6 +12,8 @@ import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @ConfigSerializable
 public class Config {
@@ -23,6 +25,7 @@ public class Config {
     @Setting public List<String> groups = ImmutableList.of();
     @Setting public List<String> restricted = ImmutableList.of();
     @Setting public Title title = new Title();
+    @Setting public Map<UUID, List<String>> aliases = ImmutableMap.of();
     @ConfigSerializable
     public static class Name {
         @Setting public boolean recolor = true;
