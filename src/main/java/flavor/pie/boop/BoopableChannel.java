@@ -23,10 +23,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class BoopableChannel implements MessageChannel {
     private Collection<MessageReceiver> receivers;
-    private Config config;
-    public BoopableChannel(Collection<MessageReceiver> receivers, Config config) {
+    private Config getConfig() {
+        return Boop.instance.config;
+    }
+
+    public BoopableChannel(Collection<MessageReceiver> receivers) {
         this.receivers = receivers;
-        this.config = config;
     }
 
     @Override
@@ -48,17 +50,17 @@ public class BoopableChannel implements MessageChannel {
                 Player player = (Player) member;
                 boolean p = sender instanceof Player;
                 Player s = p ? (Player) sender : null;
-                if ((config.sound.play || config.title.use) &&
-                        ((!p || (s.hasPermission("boop.use." + player.getName()) || !config.restricted.contains(player.getName())))
-                                && (textContains(original, config.prefix + player.getName())
+                if ((getConfig().sound.play || getConfig().title.use) &&
+                        ((!p || (s.hasPermission("boop.use." + player.getName()) || !getConfig().restricted.contains(player.getName())))
+                                && (textContains(original, getConfig().prefix + player.getName())
                             ||  textContainsAny(original, applyPrefixes(getGroupNames(player).stream()
-                                .filter(t -> !p || (s.hasPermission("boop.use." + t) || !config.restricted.contains(t)))
+                                .filter(t -> !p || (s.hasPermission("boop.use." + t) || !getConfig().restricted.contains(t)))
                                 .collect(Collectors.toList())))))) {
-                    if (config.sound.play) {
-                        player.playSound(config.sound.sound, player.getLocation().getPosition(), 10.0);
+                    if (getConfig().sound.play) {
+                        player.playSound(getConfig().sound.sound, player.getLocation().getPosition(), 10.0);
                     }
-                    if (config.title.use) {
-                        player.sendTitle(Title.builder().subtitle(config.title.text).fadeIn(20).fadeOut(20).stay(40).build());
+                    if (getConfig().title.use) {
+                        player.sendTitle(Title.builder().subtitle(getConfig().title.text).fadeIn(20).fadeOut(20).stay(40).build());
                     }
                 }
             }
@@ -74,11 +76,11 @@ public class BoopableChannel implements MessageChannel {
     }
 
     private List<String> getGroupNames(Player p) {
-        return config.groups.stream().filter(s -> isInGroup(p, s)).collect(Collectors.toList());
+        return getConfig().groups.stream().filter(s -> isInGroup(p, s)).collect(Collectors.toList());
     }
 
     private List<String> applyPrefixes(List<String> in) {
-        return Lists.transform(in, config.prefix::concat);
+        return Lists.transform(in, getConfig().prefix::concat);
     }
 
     private boolean isInGroup(Player p, String group) {
@@ -90,30 +92,30 @@ public class BoopableChannel implements MessageChannel {
         if (!(recipient instanceof Player)) return Optional.of(original);
         Player p = (Player) recipient;
         List<String> groups = applyPrefixes(getGroupNames(p));
-        String match = config.prefix + p.getName();
+        String match = getConfig().prefix + p.getName();
         boolean matchesAny = textContains(original, match) || textContainsAny(original, groups);
-        if (!matchesAny && !config.name.colorAll) return Optional.of(original);
-        if (config.name.recolor) {
-            original = addColor(original, match, config.name.color);
+        if (!matchesAny && !getConfig().name.colorAll) return Optional.of(original);
+        if (getConfig().name.recolor) {
+            original = addColor(original, match, getConfig().name.color);
             for (String s: groups) {
-                original = addColor(original, s, config.name.color);
+                original = addColor(original, s, getConfig().name.color);
             }
         }
-        if (config.name.colorAll) {
+        if (getConfig().name.colorAll) {
             for (Player pl : Sponge.getServer().getOnlinePlayers()) {
-                String pmatch = config.prefix + pl.getName();
+                String pmatch = getConfig().prefix + pl.getName();
                 if (!pl.equals(p) && textContains(original, pmatch)) {
-                    original = addColor(original, pmatch, config.name.altColor);
+                    original = addColor(original, pmatch, getConfig().name.altColor);
                 }
             }
-            for (String group : config.groups) {
-                String gmatch = config.prefix + group;
+            for (String group : getConfig().groups) {
+                String gmatch = getConfig().prefix + group;
                 if (!isInGroup(p, group) && textContains(original, gmatch)) {
-                    original = addColor(original, gmatch, config.name.altColor);
+                    original = addColor(original, gmatch, getConfig().name.altColor);
                 }
             }
         }
-        if (matchesAny && config.message.recolor) original = original.toBuilder().color(config.message.color).build();
+        if (matchesAny && getConfig().message.recolor) original = original.toBuilder().color(getConfig().message.color).build();
         return Optional.of(original);
     }
 

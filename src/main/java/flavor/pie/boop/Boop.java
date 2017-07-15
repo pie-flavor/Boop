@@ -35,8 +35,10 @@ public class Boop {
     @Inject @DefaultConfig(sharedRoot = true)
     ConfigurationLoader<CommentedConfigurationNode> loader;
     Config config;
+    public static Boop instance;
     @Listener
     public void preInit(GamePreInitializationEvent e) throws IOException, ObjectMappingException {
+        instance = this;
         Asset conf = game.getAssetManager().getAsset(this, "default.conf").get();
         ConfigurationNode root;
         try {
@@ -77,7 +79,7 @@ public class Boop {
     public void onChat(MessageChannelEvent.Chat e) {
         MessageChannel channel = e.getChannel().orElseGet(e::getOriginalChannel);
         if (!(channel instanceof BoopableChannel)) {
-            e.setChannel(new BoopableChannel(channel.getMembers(), config));
+            e.setChannel(new BoopableChannel(channel.getMembers()));
         }
     }
 
