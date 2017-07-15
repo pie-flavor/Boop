@@ -27,7 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 
-@Plugin(id = "boop", name = "Boop", version = "1.4.6", authors = "pie_flavor",
+@Plugin(id = "boop", name = "Boop", version = "1.5.0", authors = "pie_flavor",
         description = "Notifies you when you're mentioned in chat.")
 public class Boop {
     public static Boop instance;
