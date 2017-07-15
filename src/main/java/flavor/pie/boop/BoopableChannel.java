@@ -1,7 +1,6 @@
 package flavor.pie.boop;
 
 import com.google.common.collect.Lists;
-import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -90,10 +89,6 @@ public class BoopableChannel implements MessageChannel {
                     ret.add(s);
                 }
             }
-        }
-        if (Boop.instance.nucleusEnabled) {
-            NucleusAPI.getNicknameService().ifPresent(nucleusNicknameService -> nucleusNicknameService.getNickname(match)
-                    .ifPresent(text -> ret.add(getConfig().prefix + text.toPlain())));
         }
         return ret;
     }

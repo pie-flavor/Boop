@@ -28,8 +28,7 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 @Plugin(id = "boop", name = "Boop", version = "1.4.6", authors = "pie_flavor",
-        description = "Notifies you when you're mentioned in chat.",
-        dependencies = @Dependency(id = "nucleus", optional = true))
+        description = "Notifies you when you're mentioned in chat.")
 public class Boop {
     public static Boop instance;
     @Inject
@@ -43,7 +42,6 @@ public class Boop {
     @Inject
     MetricsLite metrics;
     Config config;
-    boolean nucleusEnabled;
     @Listener
     public void preInit(GamePreInitializationEvent e) throws IOException, ObjectMappingException {
         instance = this;
@@ -68,9 +66,6 @@ public class Boop {
             logger.error("Invalid config file!");
             mapDefault();
             throw ex;
-        }
-        if (Sponge.getPluginManager().isLoaded("nucleus")) {
-            nucleusEnabled = true;
         }
     }
     private void mapDefault() throws IOException, ObjectMappingException {

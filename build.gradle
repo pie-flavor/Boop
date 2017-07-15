@@ -16,9 +16,6 @@ repositories {
     maven {
         url 'http://repo.bstats.org/content/repositories/releases/'
     }
-    maven {
-        url 'http://repo.drnaylor.co.uk/artifactory/list/minecraft'
-    }
 }
 
 configurations {
@@ -27,7 +24,6 @@ configurations {
 
 dependencies {
     compile 'org.spongepowered:spongeapi:5.0.0'
-    compile 'io.github.nucleuspowered:nucleus-api:1.1.0-SNAPSHOT-S5.1'
     shadow 'org.bstats:bstats-sponge-lite:1.2'
 }
 
@@ -38,6 +34,7 @@ spongestart {
 
 jar.enabled = false
 build.dependsOn shadowJar
+signArchives.dependsOn shadowJar
 
 shadowJar {
     classifier = null
