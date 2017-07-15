@@ -82,7 +82,7 @@ public class BoopableChannel implements MessageChannel {
 
     private List<String> getPlayerMatches(Player match) {
         List<String> ret = new LinkedList<>();
-        ret.add(match.getName());
+        ret.add("@" + match.getName());
         if (getConfig().aliases.containsKey(match.getUniqueId())) {
             for (String s : getConfig().aliases.get(match.getUniqueId())) {
                 if (!Sponge.getServer().getPlayer(s).isPresent()) {
