@@ -10,10 +10,12 @@ import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.GuavaCollectors;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @ConfigSerializable
 public class Config {
@@ -26,6 +28,20 @@ public class Config {
     @Setting public List<String> restricted = ImmutableList.of();
     @Setting public Title title = new Title();
     @Setting public Map<UUID, List<String>> aliases = ImmutableMap.of();
+    @Setting("blacklisted-channels") private List<String> blacklistedChannels = ImmutableList.of();
+    private List<Class<?>> blacklistedChannelClasses;
+    public List<Class<?>> blacklistedChannels() {
+        if (blacklistedChannelClasses == null) {
+            blacklistedChannelClasses = blacklistedChannels.stream().flatMap(f -> {
+                try {
+                    return Stream.of(Class.forName(f));
+                } catch (ClassNotFoundException ex) {
+                    return Stream.empty();
+                }
+            }).collect(GuavaCollectors.toImmutableList());
+        }
+        return blacklistedChannelClasses;
+    }
     @ConfigSerializable
     public static class Name {
         @Setting public boolean recolor = true;

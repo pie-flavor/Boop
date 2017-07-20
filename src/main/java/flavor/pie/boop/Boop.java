@@ -9,7 +9,6 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bstats.sponge.MetricsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.entity.living.player.Player;
@@ -18,7 +17,6 @@ import org.spongepowered.api.event.command.TabCompleteEvent;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
-import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.channel.MessageChannel;
 
@@ -52,7 +50,7 @@ public class Boop {
                 conf.copyToFile(path);
             }
             root = loader.load();
-            if (root.getNode("version").getInt() < 5) {
+            if (root.getNode("version").getInt() < 6) {
                 root.mergeValuesFrom(loadDefault());
                 root.getNode("version").setValue(5);
                 loader.save(root);
@@ -85,6 +83,11 @@ public class Boop {
     public void onChat(MessageChannelEvent.Chat e) {
         MessageChannel channel = e.getChannel().orElseGet(e::getOriginalChannel);
         if (!(channel instanceof BoopableChannel)) {
+            for (Class<?> bChannel : config.blacklistedChannels()) {
+                if (bChannel.isAssignableFrom(channel.getClass())) {
+                    return;
+                }
+            }
             e.setChannel(new BoopableChannel(channel.getMembers()));
         }
     }
