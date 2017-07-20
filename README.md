@@ -11,7 +11,8 @@ Boop is a chat plugin that notifies you when you're mentioned in chat. By defaul
 `groups[]`: Each string in here represents a group of people that can be mentioned. A person is in a group if they have the permission node `boop.group.<group_name>`. If the group name contains dots, they are changed in the permission to be underscores.  
 `title{}`: If `use` is true, then `text` will be shown to the player as a subtitle when they are mentioned.
 `restricted[]`: Anything in this list has restricted usage for mentioning; the permission `boop.use.<boop_text>` will be required to boop them. For example, you may have a group `all`, and all users have `boop.group.all`; if you restrict `all`, and only give `boop.use.all` to admins, only admins will be able to boop via `@all`.
-`aliases{}`: Here, you can supply aliases for players. For example, if I gave myself an alias `Owner` on my server, players typing `@Owner` would boop me. This is recommended over groups for single players.
+`aliases{}`: Here, you can supply aliases for players. For example, if I gave myself an alias `Owner` on my server, players typing `@Owner` would boop me. This is recommended over groups for single players.  
+`blacklisted-channels[]`: A list of class names of channels to _not_ replace with a BoopableChannel. e.g. `io.github.nucleuspowered.nucleus.api.chat.NucleusChatChannel$StaffChat`
 
 ### Commands
 
@@ -32,6 +33,7 @@ Boop is a chat plugin that notifies you when you're mentioned in chat. By defaul
 1.4.4: Fixed a bug with disappearing boops.
 1.4.5: Fixed a bug with disappearing messages.
 1.5.0: Added aliases and made the channel usable by plugins.
+1.6.0: Added channel blacklists.
 
 #### Note
 
