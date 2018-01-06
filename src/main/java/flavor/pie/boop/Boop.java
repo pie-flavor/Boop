@@ -43,40 +43,10 @@ public class Boop {
     @Listener
     public void preInit(GamePreInitializationEvent e) throws IOException, ObjectMappingException {
         instance = this;
-        Asset conf = game.getAssetManager().getAsset(this, "default.conf").get();
-        ConfigurationNode root;
-        try {
-            if (!Files.exists(path)) {
-                conf.copyToFile(path);
-            }
-            root = loader.load();
-            if (root.getNode("version").getInt() < 6) {
-                root.mergeValuesFrom(loadDefault());
-                root.getNode("version").setValue(5);
-                loader.save(root);
-            }
-            config = root.getValue(Config.type);
-        } catch (IOException ex) {
-            logger.error("Error loading config!");
-            mapDefault();
-            throw ex;
-        } catch (ObjectMappingException ex) {
-            logger.error("Invalid config file!");
-            mapDefault();
-            throw ex;
+        if (!Files.exists(path)) {
+            game.getAssetManager().getAsset(this, "default.conf").get().copyToFile(path);
         }
-    }
-    private void mapDefault() throws IOException, ObjectMappingException {
-        try {
-            config = loadDefault().getValue(Config.type);
-        } catch (IOException | ObjectMappingException ex) {
-            logger.error("Could not load the embedded default config! Disabling plugin.");
-            game.getEventManager().unregisterPluginListeners(this);
-            throw ex;
-        }
-    }
-    private ConfigurationNode loadDefault() throws IOException {
-        return HoconConfigurationLoader.builder().setURL(game.getAssetManager().getAsset(this, "default.conf").get().getUrl()).build().load(loader.getDefaultOptions());
+        config = loader.load().getValue(Config.type);
     }
 
     @Listener
