@@ -23,6 +23,7 @@ import org.spongepowered.api.text.channel.MessageChannel;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Plugin(id = "boop", name = "Boop", version = "1.6.0", authors = "pie_flavor",
@@ -62,13 +63,15 @@ public class Boop {
         }
     }
 
+    private final static Pattern SPACE = Pattern.compile(" ");
+
     @Listener
     public void onTab(TabCompleteEvent.Chat e) {
         String currentWord;
         if (!e.getRawMessage().contains(" ")) {
             currentWord = e.getRawMessage();
         } else {
-            String[] words = e.getRawMessage().split(" ");
+            String[] words = SPACE.split(e.getRawMessage());
             currentWord = words[words.length - 1];
         }
         if (currentWord.startsWith("@")) {
