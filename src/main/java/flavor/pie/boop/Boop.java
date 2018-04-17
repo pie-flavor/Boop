@@ -1,15 +1,12 @@
 package flavor.pie.boop;
 
 import com.google.inject.Inject;
-import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bstats.sponge.MetricsLite;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -41,6 +38,7 @@ public class Boop {
     @Inject
     MetricsLite metrics;
     Config config;
+
     @Listener
     public void preInit(GamePreInitializationEvent e) throws IOException, ObjectMappingException {
         instance = this;
@@ -68,10 +66,10 @@ public class Boop {
     @Listener
     public void onTab(TabCompleteEvent.Chat e) {
         String currentWord;
-        if (!e.getRawMessage().contains(" ")) {
+        String[] words = SPACE.split(e.getRawMessage());
+        if (words.length == 0) {
             currentWord = e.getRawMessage();
         } else {
-            String[] words = SPACE.split(e.getRawMessage());
             currentWord = words[words.length - 1];
         }
         if (currentWord.startsWith("@")) {
