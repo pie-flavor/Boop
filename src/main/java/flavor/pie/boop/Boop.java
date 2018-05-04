@@ -57,7 +57,7 @@ public class Boop {
                     return;
                 }
             }
-            e.setChannel(new BoopableChannel(channel.getMembers()));
+            e.setChannel(new BoopableChannel(channel));
         }
     }
 
