@@ -23,18 +23,22 @@ import java.util.stream.StreamSupport;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class BoopableChannel implements MessageChannel {
-    private Collection<MessageReceiver> receivers;
+    private MessageChannel originalChannel;
     private Config getConfig() {
         return Boop.instance.config;
     }
 
-    public BoopableChannel(Collection<MessageReceiver> receivers) {
-        this.receivers = receivers;
+    public BoopableChannel(MessageChannel originalChannel) {
+        this.originalChannel = originalChannel;
+    }
+
+    public MessageChannel getOriginalChannel() {
+        return originalChannel;
     }
 
     @Override
     public Collection<MessageReceiver> getMembers() {
-        return receivers;
+        return getOriginalChannel().getMembers();
     }
 
     @Override
