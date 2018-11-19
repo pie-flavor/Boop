@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Plugin(id = "boop", name = "Boop", version = "1.6.1", authors = "pie_flavor",
+@Plugin(id = "boop", name = "Boop", version = "1.6.2", authors = "pie_flavor",
         description = "Notifies you when you're mentioned in chat.")
 public class Boop {
     public static Boop instance;
