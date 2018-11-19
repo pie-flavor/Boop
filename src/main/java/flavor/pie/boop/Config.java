@@ -10,7 +10,6 @@ import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.GuavaCollectors;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class Config {
                 } catch (ClassNotFoundException ex) {
                     return Stream.empty();
                 }
-            }).collect(GuavaCollectors.toImmutableList());
+            }).collect(ImmutableList.toImmutableList());
         }
         return blacklistedChannelClasses;
     }
