@@ -8,6 +8,7 @@ import org.bstats.sponge.MetricsLite2;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.TabCompleteEvent;
@@ -73,8 +74,18 @@ public class Boop {
             currentWord = words[words.length - 1];
         }
         if (currentWord.startsWith("@")) {
-            e.getTabCompletions().addAll(config.groups.stream().map(s -> "@"+s).filter(s -> s.toLowerCase().startsWith(currentWord.toLowerCase())).collect(Collectors.toList()));
-            e.getTabCompletions().addAll(game.getServer().getOnlinePlayers().stream().map(Player::getName).map(s -> "@"+s).filter(s -> s.toLowerCase().startsWith(currentWord.toLowerCase())).collect(Collectors.toList()));
+            e.getTabCompletions().addAll(
+                    config.groups.stream()
+                            .map(s -> "@"+s)
+                            .filter(s -> s.toLowerCase().startsWith(currentWord.toLowerCase()))
+                            .collect(Collectors.toList()));
+            e.getTabCompletions().addAll(
+                    game.getServer().getOnlinePlayers().stream()
+                            .filter(p -> !p.get(Keys.VANISH).orElse(false))
+                            .map(Player::getName)
+                            .map(s -> "@"+s)
+                            .filter(s -> s.toLowerCase().startsWith(currentWord.toLowerCase()))
+                            .collect(Collectors.toList()));
         }
     }
 

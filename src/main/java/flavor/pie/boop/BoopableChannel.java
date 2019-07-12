@@ -2,6 +2,7 @@ package flavor.pie.boop;
 
 import com.google.common.collect.Lists;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.channel.ChatTypeMessageReceiver;
@@ -53,6 +54,9 @@ public class BoopableChannel implements MessageChannel {
             }
             if (member instanceof Player) {
                 Player player = (Player) member;
+                if (!getConfig().canPingVanished && player.get(Keys.VANISH).orElse(false)) {
+                    return;
+                }
                 boolean p = sender instanceof Player;
                 Player s = p ? (Player) sender : null;
                 if ((getConfig().sound.play || getConfig().title.use) &&
@@ -107,7 +111,10 @@ public class BoopableChannel implements MessageChannel {
 
     @Override
     public Optional<Text> transformMessage(@Nullable Object sender, MessageReceiver recipient, Text original, ChatType type) {
-        if (!(recipient instanceof Player)) return Optional.of(original);
+        if (!(recipient instanceof Player)
+                || (!getConfig().canPingVanished && ((Player) recipient).get(Keys.VANISH).orElse(false))) {
+            return Optional.of(original);
+        }
         Player p = (Player) recipient;
         List<String> groups = applyPrefixes(getGroupNames(p));
         boolean matchesAny = textContainsAny(original, getPlayerMatches(p)) || textContainsAny(original, groups);
@@ -122,6 +129,9 @@ public class BoopableChannel implements MessageChannel {
         }
         if (getConfig().name.colorAll) {
             for (Player pl : Sponge.getServer().getOnlinePlayers()) {
+                if (pl.get(Keys.VANISH).orElse(false)) {
+                    continue;
+                }
                 for (String pmatch : getPlayerMatches(pl)) {
                     if (!pl.equals(p) && textContains(original, pmatch)) {
                         original = addColor(original, pmatch, getConfig().name.altColor);

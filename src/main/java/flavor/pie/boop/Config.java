@@ -41,6 +41,7 @@ public class Config {
         }
         return blacklistedChannelClasses;
     }
+    @Setting("can-ping-vanished") public boolean canPingVanished = true;
     @ConfigSerializable
     public static class Name {
         @Setting public boolean recolor = true;
