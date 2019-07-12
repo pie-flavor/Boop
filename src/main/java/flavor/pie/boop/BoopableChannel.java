@@ -164,7 +164,7 @@ public class BoopableChannel implements MessageChannel {
                 builder.append(nameText);
             }
             builder.append(Text.of(sections[sections.length - 1]));
-            if (plain.endsWith(name)) {
+            if (plain.toLowerCase().endsWith(name.toLowerCase())) {
                 builder.append(nameText);
             }
             builder.style(text.getStyle()).color(text.getColor()).append(text.getChildren());
