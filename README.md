@@ -30,9 +30,9 @@ Boop is a chat plugin that notifies you when you're mentioned in chat. By defaul
 1.4.1: Fixed bug with config.  
 1.4.2: Fixed bug with colors.  
 1.4.3: Fixed bug with group permissions.  
-1.4.4: Fixed a bug with disappearing boops.
-1.4.5: Fixed a bug with disappearing messages.
-1.5.0: Added aliases and made the channel usable by plugins.
+1.4.4: Fixed a bug with disappearing boops.  
+1.4.5: Fixed a bug with disappearing messages.  
+1.5.0: Added aliases and made the channel usable by plugins.  
 1.6.0: Added channel blacklists.
 
 #### Note
